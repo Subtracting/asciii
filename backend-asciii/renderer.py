@@ -1,22 +1,14 @@
+import random
 import cv2
 from PIL import Image, ImageDraw, ImageFont
+import numpy as np
 
 mapping = [".", ";", "/", "}", "%", "#", "$"]
-# mapping = ["/", "#", "$", "9", "0"]
 
-size = 40
+size = 16
+font_scale = 20
 gif = 0
-
-font = ImageFont.truetype("arial.ttf", size)
-
-
-def change_contrast(img, level):
-    factor = (259 * (level + 255)) / (255 * (259 - level))
-
-    def contrast(c):
-        return 128 + factor * (c - 128)
-
-    return img.point(contrast)
+offset = 1
 
 
 def create_gif(image_paths, output_gif_path, duration=60):
@@ -32,24 +24,34 @@ def create_gif(image_paths, output_gif_path, duration=60):
 
 def draw_img(size, bgColor):
     image = Image.new("RGB", size, bgColor)
-    change_contrast(image, 100)
     return image
 
 
-def draw_char(image, coords, character, fontColor):
+def draw_char(image, coords, character, font, fontColor):
     x, y = coords
     draw = ImageDraw.Draw(image)
     draw.text((x, y), character, fill=fontColor, font=font)
 
 
-def process_image(input_path, size, mapping, count):
+def process_image(input_path, size, mapping, output_path, font_scale):
+    font = ImageFont.truetype("arial.ttf", font_scale)
+
     img = cv2.imread(f"{input_path}", 0)
     img2 = cv2.imread(f"{input_path}", 1)
+
+    bg_color = tuple(map(int, np.min(img2, axis=(0, 1))))
+
+    v = np.median(img)
+    sigma = 0.33
+
+    lower = int(max(0, (1.0 - sigma) * v))
+    upper = int(min(255, (1.0 + sigma) * v))
+    edges = cv2.Canny(img, lower, upper, apertureSize=3)
 
     width = len(img[0])
     height = len(img)
 
-    image = draw_img((width, height), "black")
+    image = draw_img((width, height), bg_color)
 
     for y in range(0, height, size):
         for x in range(0, width, size):
@@ -65,18 +67,44 @@ def process_image(input_path, size, mapping, count):
             avg = sum(avg_arr) / len(avg_arr)
             idx = int(avg // (355 / len(mapping)))
 
-            draw_char(image, (x, y), mapping[idx], tuple(img2[y][x]))
+            red = img2[y][x][2]
+            green = img2[y][x][1]
+            blue = img2[y][x][0]
 
-    image.save(f"output/image_{count:02d}.png", "PNG")
-    # ges = cv2.Canny(img, 100, 200)
-    # print(ges)
+            color = (red, green, blue)
+            char = mapping[idx]
 
+            draw_char(
+                image,
+                (x, y),
+                char,
+                font,
+                color,
+            )
 
-process_image("input/test.png", size=size, mapping=mapping, count=9999999)
+    for y in range(0, height, size // 2):
+        for x in range(0, width, size // 2):
+            if edges[y][x] != 0:
+                char = random.sample([".", ","], 1)[0]
+                red = img2[y][x][2]
+                green = img2[y][x][1]
+                blue = img2[y][x][0]
+
+                color = (red, green, blue)
+                color = (80, 50, 50)
+                draw_char(
+                    image,
+                    (x, y),
+                    char,
+                    font,
+                    color,
+                )
+
+    image.save(output_path, "PNG")
 
 
 if gif == 1:
-    vidcap = cv2.VideoCapture("recall.mp4")
+    vidcap = cv2.VideoCapture("input/recall.mp4")
     success, image = vidcap.read()
     count = 0
     k = 0
@@ -92,4 +120,4 @@ if gif == 1:
         images.append(f"output/image_{count:02d}.png")
         count += 1
 
-    create_gif(images, "recall.gif")
+    create_gif(images, "output/recall.gif")

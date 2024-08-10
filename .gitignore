@@ -1,3 +1,25 @@
-/frames
-/input
-/output
+backend-asciii/frames
+backend-asciii/output
+backend-asciii/uploads
+
+# dependencies
+frontend-asciii/node_modules
+frontend-asciii/node_modules/.pnp
+.pnp.js
+
+# testing
+frontend-asciii/node_modules/coverage
+
+# production
+frontend-asciii/node_modules/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -1,0 +1,10 @@
+body {
+  background-color: #ffffff;
+  color: #000000;
+  font-family: Arial, sans-serif;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
