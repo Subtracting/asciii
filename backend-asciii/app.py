@@ -33,7 +33,9 @@ def upload_file():
         file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(file_path)
 
-        output_path = os.path.join(app.config["OUTPUT_FOLDER"], "output_img.png")
+        output_path = os.path.join(
+            app.config["OUTPUT_FOLDER"], f"output_{file.filename}.png"
+        )
 
         size = int(request.form.get("size"))
         mapping = list(request.form.get("mapping"))
@@ -48,7 +50,10 @@ def upload_file():
 
         return (
             jsonify(
-                {"message": "File successfully uploaded", "filename": "output_img.png"}
+                {
+                    "message": "File successfully uploaded",
+                    "filename": f"output_{file.filename}.png",
+                }
             ),
             200,
         )

@@ -5,10 +5,8 @@ import numpy as np
 
 mapping = [".", ";", "/", "}", "%", "#", "$"]
 
-size = 16
-font_scale = 20
-gif = 0
-offset = 1
+# size = 16
+# font_scale = 20
 
 
 def create_gif(image_paths, output_gif_path, duration=60):
@@ -103,21 +101,21 @@ def process_image(input_path, size, mapping, output_path, font_scale):
     image.save(output_path, "PNG")
 
 
-if gif == 1:
-    vidcap = cv2.VideoCapture("input/recall.mp4")
-    success, image = vidcap.read()
-    count = 0
-    k = 0
-    images = []
+# if gif == 1:
+#     vidcap = cv2.VideoCapture("input/recall.mp4")
+#     success, image = vidcap.read()
+#     count = 0
+#     k = 0
+#     images = []
 
-    while success:
-        cv2.imwrite(f"frames/frame{count:02d}.jpg", image)
-        success, image = vidcap.read()
-        print("Read a new frame: ", success, count)
-        process_image(
-            f"frames/frame{count:02d}.jpg", size=size, mapping=mapping, count=count
-        )
-        images.append(f"output/image_{count:02d}.png")
-        count += 1
+#     while success:
+#         cv2.imwrite(f"frames/frame{count:02d}.jpg", image)
+#         success, image = vidcap.read()
+#         print("Read a new frame: ", success, count)
+#         process_image(
+#             f"frames/frame{count:02d}.jpg", size=size, mapping=mapping, count=count
+#         )
+#         images.append(f"output/image_{count:02d}.png")
+#         count += 1
 
-    create_gif(images, "output/recall.gif")
+#     create_gif(images, "output/recall.gif")

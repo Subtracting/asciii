@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './App.css';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -48,19 +49,34 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Asciii Renderer</h1>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Render</button>
-      <input type="range" min="1" max="15" defaultValue="6" id="slider" onChange={handleSizeChange}></input>
-      <input type="range" min="1" max="32" defaultValue="16" id="slider" onChange={handleScaleChange}></input>
-      <input type="input" defaultValue={mapping} onChange={handleMappingChange}></input>
-        <div>
-          <h3>Rendered Image:</h3>
-          {!image ? (
-                <img src="https://s4.ezgif.com/tmp/ezgif-4-a301f7ac6f.gif" alt="loading..."  width="250" />
-            ) : (
-                <img src={image} alt="Uploaded" style={{ maxWidth: '100%' }} />
-            )}
+      <div className='header'>
+        <h1>Asciii Renderer</h1>
+      </div>
+      <div className='main'>
+
+        <div className='image-container'>
+            {!image ? (
+                  <div>Loading...</div>
+              ) : (
+                  <img src={image} alt="Uploaded" style={{ maxWidth: '100%' }} />
+              )}
+          </div>
+
+        <div className='controls-container'>
+          <label for="files" className="upload-btn">Select Image</label>
+          <div className='selected-file'>{
+            file ? `${file.name}` : "No file selected..."}
+          </div>
+          <input hidden type="file" id="files" className="file-input" onChange={handleFileChange}/>
+          size
+          <input type="range" min="1" max="15" defaultValue="6" id="size" className='slider-input' onChange={handleSizeChange}></input>
+          scale
+          <input type="range" min="1" max="32" defaultValue="16" id="scale" className='slider-input' onChange={handleScaleChange}></input>
+          mapping
+          <input type="input" defaultValue={mapping} className="mapping-input" onChange={handleMappingChange}></input>
+          <button className="render-button" onClick={handleUpload}>Render</button>
+        </div>
+
         </div>
     </div>
   );
